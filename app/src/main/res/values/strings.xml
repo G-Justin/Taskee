@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Taskee</string>
+    <string name="dialog_title_hint">Enter title here</string>
+    <string name="dialog_title">Title:</string>
+
+    <string name="create_task_button">Create task</string>
+    <string name="create_subtask_button">Create subtask</string>
+</resources>
