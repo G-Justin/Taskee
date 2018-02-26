@@ -22,7 +22,7 @@ public class Task {
 
     private UUID mId;
     private String mTitle;
-    private List<SubTask> mSubTaskList = new ArrayList<>();
+    private List<Task> mSubTaskList = new ArrayList<>();
 
     //========================================================================================
     // Constructors
@@ -41,11 +41,11 @@ public class Task {
     //========================================================================================
 
 
-    public List<SubTask> getSubTaskList() {
+    public List<Task> getSubTaskList() {
         return mSubTaskList;
     }
 
-    public void setSubTaskList(List<SubTask> subTaskList) {
+    public void setSubTaskList(List<Task> subTaskList) {
         mSubTaskList = subTaskList;
     }
 

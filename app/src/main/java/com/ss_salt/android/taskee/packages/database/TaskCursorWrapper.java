@@ -5,7 +5,6 @@ import android.database.CursorWrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.ss_salt.android.taskee.packages.models.SubTask;
 import com.ss_salt.android.taskee.packages.models.Task;
 
 import com.ss_salt.android.taskee.packages.database.TaskDbSchema.TaskTable;
@@ -34,7 +33,6 @@ public class TaskCursorWrapper extends CursorWrapper {
         // Convert to List object first with GSON.
         task.setSubTaskList(getSubTaskList(subTaskList));
 
-
         return task;
     }
 
@@ -42,10 +40,10 @@ public class TaskCursorWrapper extends CursorWrapper {
     /***
      * Convert subTaskList String into a List object with GSON.
      * */
-    private List<SubTask> getSubTaskList(String subTaskList) {
+    private List<Task> getSubTaskList(String subTaskList) {
         Gson gson = new Gson();
-        Type type = new TypeToken<List<SubTask>>(){}.getType();
-        ArrayList<SubTask> fromGsonList = gson.fromJson(subTaskList, type);
+        Type type = new TypeToken<List<Task>>(){}.getType();
+        ArrayList<Task> fromGsonList = gson.fromJson(subTaskList, type);
 
         return fromGsonList;
     }

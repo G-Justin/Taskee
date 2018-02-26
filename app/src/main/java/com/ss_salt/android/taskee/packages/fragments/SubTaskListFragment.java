@@ -2,14 +2,12 @@ package com.ss_salt.android.taskee.packages.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.MediaCasException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import com.ss_salt.android.taskee.packages.models.SubTask;
 import com.ss_salt.android.taskee.packages.models.Task;
 import com.ss_salt.android.taskee.packages.models.TaskLab;
 
@@ -55,9 +52,9 @@ public class SubTaskListFragment extends Fragment {
     private FloatingActionButton mAddSubTaskButton;
     private Button mCreateSubTaskButton;
 
-    private SubTask mHelperSubTask;
+    private Task mHelperSubTask;
     // Local mSubTaskList that will be used to update the database.
-    private List<SubTask> mSubTaskList;
+    private List<Task> mSubTaskList;
 
     //========================================================================================
     // Constructors
@@ -170,7 +167,7 @@ public class SubTaskListFragment extends Fragment {
     //========================================================================================
 
     private void updateUI() {
-        List<SubTask> subTasks = mTask.getSubTaskList();
+        List<Task> subTasks = mTask.getSubTaskList();
         mSubTaskList = subTasks;
 
         if (mSubTaskAdapter == null) {
@@ -207,7 +204,7 @@ public class SubTaskListFragment extends Fragment {
 
 
     private void addSubTaskToList(String taskTitle) {
-        SubTask subTask = new SubTask();
+        Task subTask = new Task();
         subTask.setTitle(taskTitle);
 
         mSubTaskList.add(subTask);
@@ -246,7 +243,7 @@ public class SubTaskListFragment extends Fragment {
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         int position = viewHolder.getAdapterPosition();
-                        SubTask subTaskToDelete = mTask.getSubTaskList().get(position);
+                        Task subTaskToDelete = mTask.getSubTaskList().get(position);
                         updateLocalSubTaskList(subTaskToDelete);
                         mSubTaskAdapter.notifyItemRemoved(position);
                         checkToShowCreateButton();
@@ -257,7 +254,7 @@ public class SubTaskListFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(mSubTaskRecyclerView);
     }
 
-    private void updateLocalSubTaskList(SubTask subTask) {
+    private void updateLocalSubTaskList(Task subTask) {
         mSubTaskList.remove(subTask);
     }
 
@@ -281,13 +278,16 @@ public class SubTaskListFragment extends Fragment {
      * Viewholder that holds each individual cardview of a task.
      */
     private class SubTaskHolder extends RecyclerView.ViewHolder {
-        private SubTask mSubTask;
+        private Task mSubTask;
 
         private TextView mSubTaskTitle;
         private ImageView mEditTitle;
+        private ImageView mHasListImageView;
 
         public SubTaskHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.task_list_item, parent, false));
+
+            mHasListImageView = itemView.findViewById(R.id.has_list_image);
 
             mSubTaskTitle = itemView.findViewById(R.id.task_title);
             mEditTitle = itemView.findViewById(R.id.edit_title_image);
@@ -300,9 +300,14 @@ public class SubTaskListFragment extends Fragment {
             });
         }
 
-        public void bind(SubTask task) {
+        public void bind(Task task) {
             mSubTask = task;
             mSubTaskTitle.setText(task.getTitle());
+            if (mSubTask.hasSubTasks()) {
+                mHasListImageView.setVisibility(View.VISIBLE);
+            } else {
+                mHasListImageView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -312,9 +317,9 @@ public class SubTaskListFragment extends Fragment {
      *
      * */
     private class SubTaskAdapter extends RecyclerView.Adapter<SubTaskHolder> {
-        private List<SubTask> mSubTasks;
+        private List<Task> mSubTasks;
 
-        public SubTaskAdapter(List<SubTask> tasks) {
+        public SubTaskAdapter(List<Task> tasks) {
             mSubTasks = tasks;
         }
 
@@ -326,7 +331,7 @@ public class SubTaskListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(SubTaskHolder holder, int position) {
-            SubTask task = mSubTasks.get(position);
+            Task task = mSubTasks.get(position);
             holder.bind(task);
         }
 
