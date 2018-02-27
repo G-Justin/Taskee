@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -242,11 +243,7 @@ public class SubTaskListFragment extends Fragment {
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                        int position = viewHolder.getAdapterPosition();
-                        Task subTaskToDelete = mTask.getSubTaskList().get(position);
-                        updateLocalSubTaskList(subTaskToDelete);
-                        mSubTaskAdapter.notifyItemRemoved(position);
-                        checkToShowCreateButton();
+                        mSubTaskAdapter.onItemRemove(viewHolder, mSubTaskRecyclerView);
                     }
                 };
 
@@ -254,7 +251,7 @@ public class SubTaskListFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(mSubTaskRecyclerView);
     }
 
-    private void updateLocalSubTaskList(Task subTask) {
+    private void removeFromLocalTaskList(Task subTask) {
         mSubTaskList.remove(subTask);
     }
 
@@ -335,9 +332,40 @@ public class SubTaskListFragment extends Fragment {
             holder.bind(task);
         }
 
+        public void setSubTasks(List<Task> subTasks) {
+            mSubTasks = subTasks;
+        }
+
         @Override
         public int getItemCount() {
             return mSubTasks.size();
+        }
+
+        public void onItemRemove(final RecyclerView.ViewHolder viewHolder, RecyclerView recyclerView) {
+            final int adapterPosition = viewHolder.getAdapterPosition();
+            final Task taskToRemove = mSubTasks.get(adapterPosition);
+
+            Snackbar snackbar = Snackbar
+                    .make(recyclerView, getContext().getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            reinsertTask(adapterPosition, taskToRemove);
+                        }
+                    });
+            snackbar.show();
+            notifyItemRemoved(adapterPosition);
+            removeFromLocalTaskList(taskToRemove);
+            checkToShowCreateButton();
+        }
+
+        private void reinsertTask(int adapterPosition, Task taskToRemove) {
+            mSubTaskList.add(adapterPosition, taskToRemove);
+            mSubTaskAdapter.setSubTasks(mSubTaskList);
+            mSubTaskAdapter.notifyItemInserted(adapterPosition);
+            mSubTaskAdapter.notifyItemRangeChanged(adapterPosition, mSubTaskAdapter.getItemCount());
+            mSubTaskRecyclerView.scrollToPosition(adapterPosition);
+            checkToShowCreateButton();
         }
     }
 }

@@ -225,11 +225,6 @@ public class TaskListFragment extends Fragment {
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         mTaskAdapter.onItemRemove(viewHolder, mTaskRecyclerView);
-//                        int position = viewHolder.getAdapterPosition();
-//                        Task taskToDelete = mTaskAdapter.mTasks.get(position);
-//
-//                        removeFromLocalTaskList(taskToDelete);
-//                        updateUI(position);
                     }
                 };
 
@@ -356,18 +351,22 @@ public class TaskListFragment extends Fragment {
                     .setAction(R.string.undo, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mTaskList.add(adapterPosition, taskToRemove);
-                            mTaskAdapter.setTasks(mTaskList);
-                            mTaskAdapter.notifyItemInserted(adapterPosition);
-                            mTaskAdapter.notifyItemRangeChanged(adapterPosition, mTaskAdapter.getItemCount());
-                            mTaskRecyclerView.scrollToPosition(adapterPosition);
+                            reinsertTask(adapterPosition, taskToRemove);
                         }
                     });
             snackbar.show();
             notifyItemRemoved(adapterPosition);
             removeFromLocalTaskList(taskToRemove);
+            checkToShowCreateButton();
         }
 
-
+        private void reinsertTask(int adapterPosition, Task taskToRemove) {
+            mTaskList.add(adapterPosition, taskToRemove);
+            mTaskAdapter.setTasks(mTaskList);
+            mTaskAdapter.notifyItemInserted(adapterPosition);
+            mTaskAdapter.notifyItemRangeChanged(adapterPosition, mTaskAdapter.getItemCount());
+            mTaskRecyclerView.scrollToPosition(adapterPosition);
+            checkToShowCreateButton();
+        }
     }
 }
