@@ -2,19 +2,18 @@ package com.ss_salt.android.taskee.packages.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.icu.lang.UProperty;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -225,11 +224,12 @@ public class TaskListFragment extends Fragment {
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                        int position = viewHolder.getAdapterPosition();
-                        Task taskToDelete = mTaskAdapter.mTasks.get(position);
-
-                        updateLocalTaskList(taskToDelete);
-                        updateUI(position);
+                        mTaskAdapter.onItemRemove(viewHolder, mTaskRecyclerView);
+//                        int position = viewHolder.getAdapterPosition();
+//                        Task taskToDelete = mTaskAdapter.mTasks.get(position);
+//
+//                        removeFromLocalTaskList(taskToDelete);
+//                        updateUI(position);
                     }
                 };
 
@@ -237,7 +237,7 @@ public class TaskListFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(mTaskRecyclerView);
     }
 
-    private void updateLocalTaskList(Task taskToDelete) {
+    private void removeFromLocalTaskList(Task taskToDelete) {
         mTaskList.remove(taskToDelete);
     }
 
@@ -346,5 +346,28 @@ public class TaskListFragment extends Fragment {
         public List<Task> getTasks() {
             return mTasks;
         }
+
+        public void onItemRemove(final RecyclerView.ViewHolder viewHolder, RecyclerView recyclerView) {
+            final int adapterPosition = viewHolder.getAdapterPosition();
+            final Task taskToRemove = mTasks.get(adapterPosition);
+
+            Snackbar snackbar = Snackbar
+                    .make(recyclerView, getContext().getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mTaskList.add(adapterPosition, taskToRemove);
+                            mTaskAdapter.setTasks(mTaskList);
+                            mTaskAdapter.notifyItemInserted(adapterPosition);
+                            mTaskAdapter.notifyItemRangeChanged(adapterPosition, mTaskAdapter.getItemCount());
+                            mTaskRecyclerView.scrollToPosition(adapterPosition);
+                        }
+                    });
+            snackbar.show();
+            notifyItemRemoved(adapterPosition);
+            removeFromLocalTaskList(taskToRemove);
+        }
+
+
     }
 }
