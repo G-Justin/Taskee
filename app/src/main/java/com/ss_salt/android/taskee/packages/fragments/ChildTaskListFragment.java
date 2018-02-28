@@ -10,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import com.ss_salt.android.taskee.packages.activites.ChildTaskListActivity;
 import com.ss_salt.android.taskee.packages.models.LocalSubTaskListClass;
 import com.ss_salt.android.taskee.packages.models.Task;
 import com.ss_salt.android.taskee.packages.models.TaskLab;
@@ -40,35 +38,38 @@ import com.ss_salt.android.taskee.packages.models.TaskLab;
  *  Fragment that holds a list of subtasks. Will need to be refactored.
  */
 
-public class SubTaskListFragment extends Fragment {
+public class ChildTaskListFragment extends Fragment {
 
     //========================================================================================
     // Properties
     //========================================================================================
     private static final String ARG_TASK_ID = "task_id";
+    private static final String ARG_SUBTASK_INDEX = "subtask_index";
     private static final String DIALOG_TITLE = "DialogTitle";
     private static final int REQUEST_TITLE = 0;
     private static final int REQUEST_EDIT = 1;
 
     private Task mTask;
-    private RecyclerView mSubTaskRecyclerView;
-    private SubTaskAdapter mSubTaskAdapter;
-    private FloatingActionButton mAddSubTaskButton;
-    private Button mCreateSubTaskButton;
+    private Task mSubTask;
+    private RecyclerView mChildTaskRecyclerView;
+    private ChildTaskAdapter mChildTaskAdapter;
+    private FloatingActionButton mAddChildTaskButton;
+    private Button mCreateChildTaskButton;
 
-    private Task mHelperSubTask;
-    // Local mSubTaskList that will be used to update the database.
-    private List<Task> mSubTaskList;
+    private Task mHelperChildTask;
+    // Local mChildTaskList that will be used to update the database.
+    private List<Task> mChildTaskList;
 
     //========================================================================================
     // Constructors
     //========================================================================================
 
-    public static SubTaskListFragment newInstance(UUID taskId) {
+    public static ChildTaskListFragment newInstance(UUID taskId, int subTaskIndex) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_TASK_ID, taskId);
+        args.putInt(ARG_SUBTASK_INDEX, subTaskIndex);
 
-        SubTaskListFragment fragment = new SubTaskListFragment();
+        ChildTaskListFragment fragment = new ChildTaskListFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,9 +82,13 @@ public class SubTaskListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
+        UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
+        int index = getArguments().getInt(ARG_SUBTASK_INDEX);
+
         mTask = TaskLab.get(getActivity()).getTask(taskId);
+        mSubTask = LocalSubTaskListClass.get().getLocalSubTaskList().get(index);
     }
 
     @Nullable
@@ -95,7 +100,7 @@ public class SubTaskListFragment extends Fragment {
 
         Toolbar toolbar = v.findViewById(R.id.toolbar_subtask);
         toolbar.setVisibility(View.VISIBLE);
-        toolbar.setTitle(mTask.getTitle());
+        toolbar.setTitle(mSubTask.getTitle());
         toolbar.setNavigationIcon(R.drawable.ic_back_button);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,21 +111,21 @@ public class SubTaskListFragment extends Fragment {
         });
 
 
-        mSubTaskRecyclerView = v.findViewById(R.id.task_recycler_view);
-        mSubTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mChildTaskRecyclerView = v.findViewById(R.id.task_recycler_view);
+        mChildTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         attachItemTouchHelperToAdapter();
 
-        mCreateSubTaskButton = v.findViewById(R.id.button_create_task);
-        mCreateSubTaskButton.setText(R.string.create_subtask_button);
-        mCreateSubTaskButton.setOnClickListener(new View.OnClickListener() {
+        mCreateChildTaskButton = v.findViewById(R.id.button_create_task);
+        mCreateChildTaskButton.setText(R.string.create_childtask_button);
+        mCreateChildTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showEditDialogForNewTask();
             }
         });
 
-        mAddSubTaskButton = v.findViewById(R.id.button_add_task);
-        mAddSubTaskButton.setOnClickListener(new View.OnClickListener() {
+        mAddChildTaskButton = v.findViewById(R.id.button_add_task);
+        mAddChildTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showEditDialogForNewTask();
@@ -171,38 +176,40 @@ public class SubTaskListFragment extends Fragment {
     //========================================================================================
 
     private void updateUI() {
-        LocalSubTaskListClass.get().setLocalSubTaskList(mTask.getSubTaskList());
-        mSubTaskList = LocalSubTaskListClass.get().getLocalSubTaskList();
+        int subTaskIndex = getArguments().getInt(ARG_SUBTASK_INDEX);
+        mSubTask = LocalSubTaskListClass.get().getLocalSubTaskList().get(subTaskIndex);
 
-        if (mSubTaskAdapter == null) {
-            mSubTaskAdapter = new SubTaskAdapter(mSubTaskList);
-            mSubTaskRecyclerView.setAdapter(mSubTaskAdapter);
+        mChildTaskList = mSubTask.getSubTaskList();
+
+        if (mChildTaskAdapter == null) {
+            mChildTaskAdapter = new ChildTaskAdapter(mChildTaskList);
+            mChildTaskRecyclerView.setAdapter(mChildTaskAdapter);
         } else {
-            mSubTaskAdapter.notifyDataSetChanged();
+            mChildTaskAdapter.notifyDataSetChanged();
         }
 
         checkToShowCreateButton();
     }
 
     private void checkToShowCreateButton() {
-        if (mSubTaskAdapter.getItemCount() == 0) {
-            mCreateSubTaskButton.setVisibility(View.VISIBLE);
+        if (mChildTaskAdapter.getItemCount() == 0) {
+            mCreateChildTaskButton.setVisibility(View.VISIBLE);
         } else {
-            mCreateSubTaskButton.setVisibility(View.GONE);
+            mCreateChildTaskButton.setVisibility(View.GONE);
         }
     }
 
     private void showEditDialogForNewTask() {
         FragmentManager fragmentManager = getFragmentManager();
         EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance();
-        dialogFragment.setTargetFragment(SubTaskListFragment.this, REQUEST_TITLE);
+        dialogFragment.setTargetFragment(ChildTaskListFragment.this, REQUEST_TITLE);
         dialogFragment.show(fragmentManager, DIALOG_TITLE);
     }
 
     private void showEditDialogForEditTask(String taskTitle) {
         FragmentManager fragmentManager = getFragmentManager();
         EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance(taskTitle);
-        dialogFragment.setTargetFragment(SubTaskListFragment.this, REQUEST_EDIT);
+        dialogFragment.setTargetFragment(ChildTaskListFragment.this, REQUEST_EDIT);
         dialogFragment.show(fragmentManager, DIALOG_TITLE);
     }
 
@@ -211,19 +218,20 @@ public class SubTaskListFragment extends Fragment {
         Task subTask = new Task();
         subTask.setTitle(taskTitle);
 
-        mSubTaskList.add(subTask);
+        mChildTaskList.add(subTask);
         updateDatabaseFromLocalList();
         updateUI();
     }
 
     private void updateDatabaseFromLocalList() {
-        mTask.setSubTaskList(mSubTaskList);
+        mSubTask.setSubTaskList(mChildTaskList);
+        mTask.setSubTaskList(LocalSubTaskListClass.get().getLocalSubTaskList());
         TaskLab.get(getActivity()).updateTask(mTask);
     }
 
     private void editSubTaskTitle(String taskTitle) {
-        int index = mSubTaskList.indexOf(mHelperSubTask);
-        mSubTaskList.get(index).setTitle(taskTitle);
+        int index = mChildTaskList.indexOf(mHelperChildTask);
+        mChildTaskList.get(index).setTitle(taskTitle);
 
         updateDatabaseFromLocalList();
         updateUI();
@@ -246,29 +254,29 @@ public class SubTaskListFragment extends Fragment {
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                        mSubTaskAdapter.onItemRemove(viewHolder, mSubTaskRecyclerView);
+                        mChildTaskAdapter.onItemRemove(viewHolder, mChildTaskRecyclerView);
                     }
                 };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchCallback);
-        itemTouchHelper.attachToRecyclerView(mSubTaskRecyclerView);
+        itemTouchHelper.attachToRecyclerView(mChildTaskRecyclerView);
     }
 
     private void removeFromLocalTaskList(Task subTask) {
-        mSubTaskList.remove(subTask);
+        mChildTaskList.remove(subTask);
     }
 
     private void rearrangeSubTasks(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(mSubTaskList, i, i + 1);
+                Collections.swap(mChildTaskList, i, i + 1);
             }
         } else {
             for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(mSubTaskList, i, i - 1);
+                Collections.swap(mChildTaskList, i, i - 1);
             }
         }
-        mSubTaskAdapter.notifyItemMoved(fromPosition, toPosition);
+        mChildTaskAdapter.notifyItemMoved(fromPosition, toPosition);
     }
 
     //========================================================================================
@@ -277,54 +285,37 @@ public class SubTaskListFragment extends Fragment {
     /**
      * Viewholder that holds each individual cardview of a task.
      */
-    private class SubTaskHolder extends RecyclerView.ViewHolder {
-        private Task mSubTask;
+    private class ChildTaskHolder extends RecyclerView.ViewHolder {
+        private Task mChildTask;
 
-        private CardView mCardView;
-        private TextView mSubTaskTitle;
+        private TextView mChildTaskTitle;
         private ImageView mEditTitle;
         private ImageView mHasListImageView;
 
-        public SubTaskHolder(LayoutInflater inflater, ViewGroup parent) {
+        public ChildTaskHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.task_list_item, parent, false));
 
             mHasListImageView = itemView.findViewById(R.id.has_list_image);
 
-            mCardView = itemView.findViewById(R.id.clickable_card_task);
-            mCardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startChildTaskTree();
-                }
-            });
-
-            mSubTaskTitle = itemView.findViewById(R.id.task_title);
+            mChildTaskTitle = itemView.findViewById(R.id.task_title);
             mEditTitle = itemView.findViewById(R.id.edit_title_image);
             mEditTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mHelperSubTask = mSubTask;
-                    showEditDialogForEditTask(mSubTask.getTitle());
+                    mHelperChildTask = mChildTask;
+                    showEditDialogForEditTask(mChildTask.getTitle());
                 }
             });
         }
 
         public void bind(Task task) {
-            mSubTask = task;
-            mSubTaskTitle.setText(task.getTitle());
-            if (mSubTask.hasSubTasks()) {
+            mChildTask = task;
+            mChildTaskTitle.setText(task.getTitle());
+            if (mChildTask.hasSubTasks()) {
                 mHasListImageView.setVisibility(View.VISIBLE);
             } else {
                 mHasListImageView.setVisibility(View.GONE);
             }
-        }
-
-        private void startChildTaskTree() {
-            UUID taskId = mTask.getId();
-            int subTaskIndex = getAdapterPosition();
-            Intent intent = ChildTaskListActivity
-                    .newIntent(getActivity(), taskId, subTaskIndex);
-            startActivity(intent);
         }
     }
 
@@ -333,37 +324,37 @@ public class SubTaskListFragment extends Fragment {
      * Adapter to hold the Viewholders for each task
      *
      * */
-    private class SubTaskAdapter extends RecyclerView.Adapter<SubTaskHolder> {
-        private List<Task> mSubTasks;
+    private class ChildTaskAdapter extends RecyclerView.Adapter<ChildTaskHolder> {
+        private List<Task> mChildTasks;
 
-        public SubTaskAdapter(List<Task> tasks) {
-            mSubTasks = tasks;
+        public ChildTaskAdapter(List<Task> tasks) {
+            mChildTasks = tasks;
         }
 
         @Override
-        public SubTaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ChildTaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
-            return new SubTaskHolder(inflater, parent);
+            return new ChildTaskHolder(inflater, parent);
         }
 
         @Override
-        public void onBindViewHolder(SubTaskHolder holder, int position) {
-            Task task = mSubTasks.get(position);
+        public void onBindViewHolder(ChildTaskHolder holder, int position) {
+            Task task = mChildTasks.get(position);
             holder.bind(task);
         }
 
-        public void setSubTasks(List<Task> subTasks) {
-            mSubTasks = subTasks;
+        public void setChildTasks(List<Task> childTasks) {
+            mChildTasks = childTasks;
         }
 
         @Override
         public int getItemCount() {
-            return mSubTasks.size();
+            return mChildTasks.size();
         }
 
         public void onItemRemove(final RecyclerView.ViewHolder viewHolder, RecyclerView recyclerView) {
             final int adapterPosition = viewHolder.getAdapterPosition();
-            final Task taskToRemove = mSubTasks.get(adapterPosition);
+            final Task taskToRemove = mChildTasks.get(adapterPosition);
 
             Snackbar snackbar = Snackbar
                     .make(recyclerView, getContext().getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
@@ -380,11 +371,11 @@ public class SubTaskListFragment extends Fragment {
         }
 
         private void reinsertTask(int adapterPosition, Task taskToRemove) {
-            mSubTaskList.add(adapterPosition, taskToRemove);
-            mSubTaskAdapter.setSubTasks(mSubTaskList);
-            mSubTaskAdapter.notifyItemInserted(adapterPosition);
-            mSubTaskAdapter.notifyItemRangeChanged(adapterPosition, mSubTaskAdapter.getItemCount());
-            mSubTaskRecyclerView.scrollToPosition(adapterPosition);
+            mChildTaskList.add(adapterPosition, taskToRemove);
+            mChildTaskAdapter.setChildTasks(mChildTaskList);
+            mChildTaskAdapter.notifyItemInserted(adapterPosition);
+            mChildTaskAdapter.notifyItemRangeChanged(adapterPosition, mChildTaskAdapter.getItemCount());
+            mChildTaskRecyclerView.scrollToPosition(adapterPosition);
             checkToShowCreateButton();
         }
     }

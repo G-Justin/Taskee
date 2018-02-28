@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".packages.activites.SubTaskListActivity" />
+        <activity android:name=".packages.activites.ChildTaskListActivity" />
     </application>
 
 </manifest>
