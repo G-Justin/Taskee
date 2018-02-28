@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.ss_salt.android.taskee.packages.models.LocalSubTaskListClass;
 import com.ss_salt.android.taskee.packages.models.Task;
 import com.ss_salt.android.taskee.packages.models.TaskLab;
 
@@ -168,11 +169,11 @@ public class SubTaskListFragment extends Fragment {
     //========================================================================================
 
     private void updateUI() {
-        List<Task> subTasks = mTask.getSubTaskList();
-        mSubTaskList = subTasks;
+        LocalSubTaskListClass.get().setLocalSubTaskList(mTask.getSubTaskList());
+        mSubTaskList = LocalSubTaskListClass.get().getLocalSubTaskList();
 
         if (mSubTaskAdapter == null) {
-            mSubTaskAdapter = new SubTaskAdapter(subTasks);
+            mSubTaskAdapter = new SubTaskAdapter(mSubTaskList);
             mSubTaskRecyclerView.setAdapter(mSubTaskAdapter);
         } else {
             mSubTaskAdapter.notifyDataSetChanged();
