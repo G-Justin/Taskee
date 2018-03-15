@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -46,8 +45,8 @@ public class TaskListFragment extends Fragment {
 
     private RecyclerView mTaskRecyclerView;
     private TaskAdapter mTaskAdapter;
-    private FloatingActionButton mAddTaskButton;
-    private Button mCreateTaskButton;                   // does the same function as mAddTaskButton
+    private FloatingActionButton mAddTaskFloatingActionButton;
+    private Button mCreateTaskButton;
 
     private Task mHelperTaskForEdit;
     private List<Task> mTaskList;
@@ -58,7 +57,6 @@ public class TaskListFragment extends Fragment {
     //========================================================================================
 
     public static TaskListFragment newInstance() {
-
         Bundle args = new Bundle();
 
         TaskListFragment fragment = new TaskListFragment();
@@ -82,8 +80,8 @@ public class TaskListFragment extends Fragment {
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         attachItemTouchHelperToAdapter();
 
-        mAddTaskButton = v.findViewById(R.id.button_add_task);
-        mAddTaskButton.setOnClickListener(new View.OnClickListener() {
+        mAddTaskFloatingActionButton = v.findViewById(R.id.button_add_task);
+        mAddTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDialogForNewTask();
@@ -98,7 +96,7 @@ public class TaskListFragment extends Fragment {
             }
         });
 
-        updateUI();
+        updateRecyclerView();
         return v;
     }
 
@@ -122,7 +120,7 @@ public class TaskListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateUI();
+        updateRecyclerView();
     }
 
     @Override
@@ -151,7 +149,7 @@ public class TaskListFragment extends Fragment {
 
         mTaskList.add(task);
         updateDatabaseFromList();
-        updateUI();
+        updateRecyclerView();
     }
 
     private void showDialogToEditTask(String taskTitle) {
@@ -168,15 +166,14 @@ public class TaskListFragment extends Fragment {
         dialogFragment.show(fragmentManager, DIALOG_TITLE);
     }
 
-    private void updateUI() {
-        List<Task> tasks = TaskLab.get(getActivity()).getTasks();
-        mTaskList = tasks;
+    private void updateRecyclerView() {
+        mTaskList = TaskLab.get(getActivity()).getTasks();
 
         if (mTaskAdapter == null) {
-            mTaskAdapter = new TaskAdapter(tasks);
+            mTaskAdapter = new TaskAdapter(mTaskList);
             mTaskRecyclerView.setAdapter(mTaskAdapter);
         } else {
-            mTaskAdapter.setTasks(tasks);
+            mTaskAdapter.setTasks(mTaskList);
             mTaskAdapter.notifyDataSetChanged();
         }
 
@@ -191,20 +188,12 @@ public class TaskListFragment extends Fragment {
         }
     }
 
-    private void updateUI(int position) {
-        mTaskAdapter.setTasks(mTaskList);
-        mTaskAdapter.notifyItemRemoved(position);
-        mTaskAdapter.notifyItemRangeChanged(position, mTaskAdapter.getItemCount());
-
-        checkToShowCreateButton();
-    }
-
     private void editTaskTitle(String title) {
         int index = mTaskList.indexOf(mHelperTaskForEdit);
         mTaskList.get(index).setTitle(title);
 
         updateDatabaseFromList();
-        updateUI();
+        updateRecyclerView();
     }
 
     private void attachItemTouchHelperToAdapter() {
@@ -249,6 +238,12 @@ public class TaskListFragment extends Fragment {
         mTaskAdapter.notifyItemMoved(fromPosition, toPosition);
     }
 
+    private void startNewTaskActivity(Task task) {
+        UUID id = task.getId();
+        Intent intent = SubTaskListActivity
+                .newIntent(getActivity(), id);
+        startActivity(intent);
+    }
 
     //========================================================================================
     // Inner Classes
@@ -272,7 +267,7 @@ public class TaskListFragment extends Fragment {
             mTaskCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startSubTaskTree();
+                    startNewTaskActivity(mTask);
                 }
             });
 
@@ -297,13 +292,6 @@ public class TaskListFragment extends Fragment {
             } else {
                 mHasListImageView.setVisibility(View.GONE);
             }
-        }
-
-        private void startSubTaskTree() {
-            UUID id = mTask.getId();
-            Intent intent = SubTaskListActivity
-                    .newIntent(getActivity(), id);
-            startActivity(intent);
         }
     }
 

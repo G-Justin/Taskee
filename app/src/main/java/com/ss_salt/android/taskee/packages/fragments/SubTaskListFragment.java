@@ -46,6 +46,7 @@ public class SubTaskListFragment extends Fragment {
     // Properties
     //========================================================================================
     private static final String ARG_TASK_ID = "task_id";
+
     private static final String DIALOG_TITLE = "DialogTitle";
     private static final int REQUEST_TITLE = 0;
     private static final int REQUEST_EDIT = 1;
@@ -57,7 +58,6 @@ public class SubTaskListFragment extends Fragment {
     private Button mCreateSubTaskButton;
 
     private Task mHelperSubTask;
-    // Local mSubTaskList that will be used to update the database.
     private List<Task> mSubTaskList;
 
     //========================================================================================
@@ -65,6 +65,7 @@ public class SubTaskListFragment extends Fragment {
     //========================================================================================
 
     public static SubTaskListFragment newInstance(UUID taskId) {
+        //TODO override
         Bundle args = new Bundle();
         args.putSerializable(ARG_TASK_ID, taskId);
 
@@ -80,6 +81,7 @@ public class SubTaskListFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        //TODO override
         super.onCreate(savedInstanceState);
         UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
@@ -93,6 +95,7 @@ public class SubTaskListFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_task_list, container, false);
 
+        //TODO call super function first then copy paste this
         Toolbar toolbar = v.findViewById(R.id.toolbar_subtask);
         toolbar.setVisibility(View.VISIBLE);
         toolbar.setTitle(mTask.getTitle());
