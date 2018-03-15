@@ -43,13 +43,13 @@ public class TaskListFragment extends Fragment {
     private static final int REQUEST_EDIT = 1;
     private static final String DIALOG_TITLE = "DialogTitle";
 
-    private RecyclerView mTaskRecyclerView;
-    private TaskAdapter mTaskAdapter;
+    RecyclerView mTaskRecyclerView;
+    TaskAdapter mTaskAdapter;
     private FloatingActionButton mAddTaskFloatingActionButton;
     private Button mCreateTaskButton;
 
     private Task mHelperTaskForEdit;
-    private List<Task> mTaskList;
+    List<Task> mTaskList;
 
 
     //========================================================================================
@@ -139,11 +139,11 @@ public class TaskListFragment extends Fragment {
     // Accessors
     //========================================================================================
 
-    private void updateDatabaseFromList() {
+    void updateDatabaseFromList() {
         TaskLab.get(getActivity()).updateDatabase(mTaskList);
     }
 
-    private void addTaskToList(String taskTitle) {
+    void addTaskToList(String taskTitle) {
         Task task = new Task();
         task.setTitle(taskTitle);
 
@@ -152,21 +152,21 @@ public class TaskListFragment extends Fragment {
         updateRecyclerView();
     }
 
-    private void showDialogToEditTask(String taskTitle) {
+    void showDialogToEditTask(String taskTitle) {
         FragmentManager fragmentManager = getFragmentManager();
         EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance(taskTitle);
         dialogFragment.setTargetFragment(TaskListFragment.this, REQUEST_EDIT);
         dialogFragment.show(fragmentManager, DIALOG_TITLE);
     }
 
-    private void showDialogForNewTask() {
+    void showDialogForNewTask() {
         FragmentManager fragmentManager = getFragmentManager();
         EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance();
         dialogFragment.setTargetFragment(TaskListFragment.this, REQUEST_TITLE);
         dialogFragment.show(fragmentManager, DIALOG_TITLE);
     }
 
-    private void updateRecyclerView() {
+    void updateRecyclerView() {
         mTaskList = TaskLab.get(getActivity()).getTasks();
 
         if (mTaskAdapter == null) {
@@ -180,7 +180,7 @@ public class TaskListFragment extends Fragment {
         checkToShowCreateButton();
     }
 
-    private void checkToShowCreateButton() {
+    void checkToShowCreateButton() {
         if (mTaskAdapter.getItemCount() == 0) {
             mCreateTaskButton.setVisibility(View.VISIBLE);
         } else {
@@ -188,7 +188,7 @@ public class TaskListFragment extends Fragment {
         }
     }
 
-    private void editTaskTitle(String title) {
+    void editTaskTitle(String title) {
         int index = mTaskList.indexOf(mHelperTaskForEdit);
         mTaskList.get(index).setTitle(title);
 
@@ -196,7 +196,7 @@ public class TaskListFragment extends Fragment {
         updateRecyclerView();
     }
 
-    private void attachItemTouchHelperToAdapter() {
+    void attachItemTouchHelperToAdapter() {
         ItemTouchHelper.SimpleCallback touchCallback =
                 new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -221,11 +221,11 @@ public class TaskListFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(mTaskRecyclerView);
     }
 
-    private void removeFromLocalTaskList(Task taskToDelete) {
+    void removeFromLocalTaskList(Task taskToDelete) {
         mTaskList.remove(taskToDelete);
     }
 
-    private void rearrangeTasks(int fromPosition, int toPosition) {
+    void rearrangeTasks(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(mTaskList, i, i + 1);
@@ -238,7 +238,7 @@ public class TaskListFragment extends Fragment {
         mTaskAdapter.notifyItemMoved(fromPosition, toPosition);
     }
 
-    private void startNewTaskActivity(Task task) {
+    void startNewTaskActivity(Task task, int adapterPosition) {
         UUID id = task.getId();
         Intent intent = SubTaskListActivity
                 .newIntent(getActivity(), id);
@@ -252,7 +252,7 @@ public class TaskListFragment extends Fragment {
     /**
      * Viewholder that holds each individual cardview of a task.
      */
-    private class TaskHolder extends RecyclerView.ViewHolder {
+    class TaskHolder extends RecyclerView.ViewHolder {
         private Task mTask;
 
         private TextView mTaskTitle;
@@ -267,7 +267,7 @@ public class TaskListFragment extends Fragment {
             mTaskCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startNewTaskActivity(mTask);
+                    startNewTaskActivity(mTask, getAdapterPosition());
                 }
             });
 
@@ -298,7 +298,7 @@ public class TaskListFragment extends Fragment {
     /**
      * Adapter for the recycler view that handles the tasks.
      * */
-    private class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
+    class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         private List<Task> mTasks;
 
         public TaskAdapter(List<Task> tasks) {

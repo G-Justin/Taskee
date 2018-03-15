@@ -40,25 +40,14 @@ import com.ss_salt.android.taskee.packages.models.TaskLab;
  *  Fragment that holds a list of subtasks. Will need to be refactored.
  */
 
-public class SubTaskListFragment extends Fragment {
+public class SubTaskListFragment extends TaskListFragment {
 
     //========================================================================================
     // Properties
     //========================================================================================
+
     private static final String ARG_TASK_ID = "task_id";
-
-    private static final String DIALOG_TITLE = "DialogTitle";
-    private static final int REQUEST_TITLE = 0;
-    private static final int REQUEST_EDIT = 1;
-
     private Task mTask;
-    private RecyclerView mSubTaskRecyclerView;
-    private SubTaskAdapter mSubTaskAdapter;
-    private FloatingActionButton mAddSubTaskButton;
-    private Button mCreateSubTaskButton;
-
-    private Task mHelperSubTask;
-    private List<Task> mSubTaskList;
 
     //========================================================================================
     // Constructors
@@ -95,7 +84,6 @@ public class SubTaskListFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_task_list, container, false);
 
-        //TODO call super function first then copy paste this
         Toolbar toolbar = v.findViewById(R.id.toolbar_subtask);
         toolbar.setVisibility(View.VISIBLE);
         toolbar.setTitle(mTask.getTitle());
@@ -107,288 +95,47 @@ public class SubTaskListFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-
-
-        mSubTaskRecyclerView = v.findViewById(R.id.task_recycler_view);
-        mSubTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        attachItemTouchHelperToAdapter();
-
-        mCreateSubTaskButton = v.findViewById(R.id.button_create_task);
-        mCreateSubTaskButton.setText(R.string.create_subtask_button);
-        mCreateSubTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showEditDialogForNewTask();
-            }
-        });
-
-        mAddSubTaskButton = v.findViewById(R.id.button_add_task);
-        mAddSubTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showEditDialogForNewTask();
-            }
-        });
-
-        updateUI();
-        return v;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
-        if (requestCode == REQUEST_TITLE) {
-            String taskTitle = (String) data
-                    .getSerializableExtra(EditTitleDialogFragment.EXTRA_TITLE);
-            addSubTaskToList(taskTitle);
-        } else if (requestCode == REQUEST_EDIT) {
-            String taskTitle = (String) data
-                    .getSerializableExtra(EditTitleDialogFragment.EXTRA_TITLE);
-            editSubTaskTitle(taskTitle);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        updateDatabaseFromLocalList();
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateUI();
-    }
-
-    @Override
-    public void onDestroy() {
-        updateDatabaseFromLocalList();
-        super.onDestroy();
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     //========================================================================================
     // Accessors
     //========================================================================================
 
-    private void updateUI() {
-        LocalSubTaskListClass.get().setLocalSubTaskList(mTask.getSubTaskList());
-        mSubTaskList = LocalSubTaskListClass.get().getLocalSubTaskList();
 
-        if (mSubTaskAdapter == null) {
-            mSubTaskAdapter = new SubTaskAdapter(mSubTaskList);
-            mSubTaskRecyclerView.setAdapter(mSubTaskAdapter);
+    @Override
+    void updateRecyclerView() {
+        LocalSubTaskListClass.get().setLocalSubTaskList(mTask.getSubTaskList());
+        mTaskList = LocalSubTaskListClass.get().getLocalSubTaskList();
+
+        if (mTaskAdapter == null) {
+            mTaskAdapter = new TaskAdapter(mTaskList);
+            mTaskRecyclerView.setAdapter(mTaskAdapter);
         } else {
-            mSubTaskAdapter.notifyDataSetChanged();
+            mTaskAdapter.notifyDataSetChanged();
         }
 
         checkToShowCreateButton();
     }
 
-    private void checkToShowCreateButton() {
-        if (mSubTaskAdapter.getItemCount() == 0) {
-            mCreateSubTaskButton.setVisibility(View.VISIBLE);
-        } else {
-            mCreateSubTaskButton.setVisibility(View.GONE);
-        }
-    }
-
-    private void showEditDialogForNewTask() {
-        FragmentManager fragmentManager = getFragmentManager();
-        EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance();
-        dialogFragment.setTargetFragment(SubTaskListFragment.this, REQUEST_TITLE);
-        dialogFragment.show(fragmentManager, DIALOG_TITLE);
-    }
-
-    private void showEditDialogForEditTask(String taskTitle) {
-        FragmentManager fragmentManager = getFragmentManager();
-        EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance(taskTitle);
-        dialogFragment.setTargetFragment(SubTaskListFragment.this, REQUEST_EDIT);
-        dialogFragment.show(fragmentManager, DIALOG_TITLE);
-    }
-
-
-    private void addSubTaskToList(String taskTitle) {
-        Task subTask = new Task();
-        subTask.setTitle(taskTitle);
-
-        mSubTaskList.add(subTask);
-        updateDatabaseFromLocalList();
-        updateUI();
-    }
-
-    private void updateDatabaseFromLocalList() {
-        mTask.setSubTaskList(mSubTaskList);
+    @Override
+    void updateDatabaseFromList() {
+        mTask.setSubTaskList(mTaskList);
         TaskLab.get(getActivity()).updateTask(mTask);
     }
 
-    private void editSubTaskTitle(String taskTitle) {
-        int index = mSubTaskList.indexOf(mHelperSubTask);
-        mSubTaskList.get(index).setTitle(taskTitle);
-
-        updateDatabaseFromLocalList();
-        updateUI();
+    @Override
+    void startNewTaskActivity(Task task, int adapterPosition) {
+        UUID taskId = mTask.getId();
+        int subTaskIndex = adapterPosition;
+        Intent intent = ChildTaskListActivity
+                .newIntent(getActivity(), taskId, subTaskIndex);
+        startActivity(intent);
     }
 
-    private void attachItemTouchHelperToAdapter() {
-        ItemTouchHelper.SimpleCallback touchCallback =
-                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
-                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-                    @Override
-                    public boolean onMove(RecyclerView recyclerView,
-                                          RecyclerView.ViewHolder viewHolder,
-                                          RecyclerView.ViewHolder target) {
-                        final int fromPosition = viewHolder.getAdapterPosition();
-                        final int toPosition = target.getAdapterPosition();
 
-                        rearrangeSubTasks(fromPosition, toPosition);
-                        return true;
-                    }
 
-                    @Override
-                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                        mSubTaskAdapter.onItemRemove(viewHolder, mSubTaskRecyclerView);
-                    }
-                };
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchCallback);
-        itemTouchHelper.attachToRecyclerView(mSubTaskRecyclerView);
-    }
 
-    private void removeFromLocalTaskList(Task subTask) {
-        mSubTaskList.remove(subTask);
-    }
-
-    private void rearrangeSubTasks(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(mSubTaskList, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(mSubTaskList, i, i - 1);
-            }
-        }
-        mSubTaskAdapter.notifyItemMoved(fromPosition, toPosition);
-    }
-
-    //========================================================================================
-    // Inner Classes
-    //========================================================================================
-    /**
-     * Viewholder that holds each individual cardview of a task.
-     */
-    private class SubTaskHolder extends RecyclerView.ViewHolder {
-        private Task mSubTask;
-
-        private CardView mCardView;
-        private TextView mSubTaskTitle;
-        private ImageView mEditTitle;
-        private ImageView mHasListImageView;
-
-        public SubTaskHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.task_list_item, parent, false));
-
-            mHasListImageView = itemView.findViewById(R.id.has_list_image);
-
-            mCardView = itemView.findViewById(R.id.clickable_card_task);
-            mCardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startChildTaskTree();
-                }
-            });
-
-            mSubTaskTitle = itemView.findViewById(R.id.task_title);
-            mEditTitle = itemView.findViewById(R.id.edit_title_image);
-            mEditTitle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mHelperSubTask = mSubTask;
-                    showEditDialogForEditTask(mSubTask.getTitle());
-                }
-            });
-        }
-
-        public void bind(Task task) {
-            mSubTask = task;
-            mSubTaskTitle.setText(task.getTitle());
-            if (mSubTask.hasSubTasks()) {
-                mHasListImageView.setVisibility(View.VISIBLE);
-            } else {
-                mHasListImageView.setVisibility(View.GONE);
-            }
-        }
-
-        private void startChildTaskTree() {
-            UUID taskId = mTask.getId();
-            int subTaskIndex = getAdapterPosition();
-            Intent intent = ChildTaskListActivity
-                    .newIntent(getActivity(), taskId, subTaskIndex);
-            startActivity(intent);
-        }
-    }
-
-    /**
-     *
-     * Adapter to hold the Viewholders for each task
-     *
-     * */
-    private class SubTaskAdapter extends RecyclerView.Adapter<SubTaskHolder> {
-        private List<Task> mSubTasks;
-
-        public SubTaskAdapter(List<Task> tasks) {
-            mSubTasks = tasks;
-        }
-
-        @Override
-        public SubTaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(getActivity());
-            return new SubTaskHolder(inflater, parent);
-        }
-
-        @Override
-        public void onBindViewHolder(SubTaskHolder holder, int position) {
-            Task task = mSubTasks.get(position);
-            holder.bind(task);
-        }
-
-        public void setSubTasks(List<Task> subTasks) {
-            mSubTasks = subTasks;
-        }
-
-        @Override
-        public int getItemCount() {
-            return mSubTasks.size();
-        }
-
-        public void onItemRemove(final RecyclerView.ViewHolder viewHolder, RecyclerView recyclerView) {
-            final int adapterPosition = viewHolder.getAdapterPosition();
-            final Task taskToRemove = mSubTasks.get(adapterPosition);
-
-            Snackbar snackbar = Snackbar
-                    .make(recyclerView, getContext().getString(R.string.task_deleted), Snackbar.LENGTH_LONG)
-                    .setAction(R.string.undo, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            reinsertTask(adapterPosition, taskToRemove);
-                        }
-                    });
-            snackbar.show();
-            notifyItemRemoved(adapterPosition);
-            removeFromLocalTaskList(taskToRemove);
-            checkToShowCreateButton();
-        }
-
-        private void reinsertTask(int adapterPosition, Task taskToRemove) {
-            mSubTaskList.add(adapterPosition, taskToRemove);
-            mSubTaskAdapter.setSubTasks(mSubTaskList);
-            mSubTaskAdapter.notifyItemInserted(adapterPosition);
-            mSubTaskAdapter.notifyItemRangeChanged(adapterPosition, mSubTaskAdapter.getItemCount());
-            mSubTaskRecyclerView.scrollToPosition(adapterPosition);
-            checkToShowCreateButton();
-        }
-    }
 }
+
