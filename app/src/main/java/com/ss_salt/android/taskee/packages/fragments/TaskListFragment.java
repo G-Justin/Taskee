@@ -45,8 +45,8 @@ public class TaskListFragment extends Fragment {
 
     RecyclerView mTaskRecyclerView;
     TaskAdapter mTaskAdapter;
-    private FloatingActionButton mAddTaskFloatingActionButton;
-    private Button mCreateTaskButton;
+    FloatingActionButton mAddTaskFloatingActionButton;
+    Button mCreateTaskButton;
 
     private Task mHelperTaskForEdit;
     List<Task> mTaskList;

@@ -54,7 +54,6 @@ public class SubTaskListFragment extends TaskListFragment {
     //========================================================================================
 
     public static SubTaskListFragment newInstance(UUID taskId) {
-        //TODO override
         Bundle args = new Bundle();
         args.putSerializable(ARG_TASK_ID, taskId);
 
@@ -70,7 +69,6 @@ public class SubTaskListFragment extends TaskListFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        //TODO override
         super.onCreate(savedInstanceState);
         UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
@@ -95,7 +93,29 @@ public class SubTaskListFragment extends TaskListFragment {
                 getActivity().onBackPressed();
             }
         });
-        return super.onCreateView(inflater, container, savedInstanceState);
+
+        mTaskRecyclerView = v.findViewById(R.id.task_recycler_view);
+        mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        attachItemTouchHelperToAdapter();
+
+        mAddTaskFloatingActionButton = v.findViewById(R.id.button_add_task);
+        mAddTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogForNewTask();
+            }
+        });
+
+        mCreateTaskButton = v.findViewById(R.id.button_create_task);
+        mCreateTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogForNewTask();
+            }
+        });
+
+        updateRecyclerView();
+        return v;
     }
 
     //========================================================================================
@@ -132,10 +152,5 @@ public class SubTaskListFragment extends TaskListFragment {
                 .newIntent(getActivity(), taskId, subTaskIndex);
         startActivity(intent);
     }
-
-
-
-
-
 }
 
