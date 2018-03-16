@@ -102,17 +102,16 @@ public class TaskListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String taskTitle = (String) data
+                .getSerializableExtra(EditTitleDialogFragment.EXTRA_TITLE);
+
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
         if (requestCode == REQUEST_TITLE) {
-            String taskTitle = (String) data
-                    .getSerializableExtra(EditTitleDialogFragment.EXTRA_TITLE);
-            addTaskToList(taskTitle);
+            addTaskToLocalTaskList(taskTitle);
         } else if (requestCode == REQUEST_EDIT) {
-            String taskTitle = (String) data
-                    .getSerializableExtra(EditTitleDialogFragment.EXTRA_TITLE);
             editTaskTitle(taskTitle);
         }
     }
@@ -125,13 +124,13 @@ public class TaskListFragment extends Fragment {
 
     @Override
     public void onPause() {
-        updateDatabaseFromList();
+        updateDatabaseFromLocalTaskList();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        updateDatabaseFromList();
+        updateDatabaseFromLocalTaskList();
         super.onDestroy();
     }
 
@@ -139,16 +138,16 @@ public class TaskListFragment extends Fragment {
     // Accessors
     //========================================================================================
 
-    void updateDatabaseFromList() {
-        TaskLab.get(getActivity()).updateDatabase(mTaskList);
+    void updateDatabaseFromLocalTaskList() {
+        TaskLab.get(getActivity()).replaceDatabaseTasksToUpdate(mTaskList);
     }
 
-    void addTaskToList(String taskTitle) {
+    void addTaskToLocalTaskList(String taskTitle) {
         Task task = new Task();
         task.setTitle(taskTitle);
 
         mTaskList.add(task);
-        updateDatabaseFromList();
+        updateDatabaseFromLocalTaskList();
         updateRecyclerView();
     }
 
@@ -170,17 +169,25 @@ public class TaskListFragment extends Fragment {
         mTaskList = TaskLab.get(getActivity()).getTasks();
 
         if (mTaskAdapter == null) {
-            mTaskAdapter = new TaskAdapter(mTaskList);
-            mTaskRecyclerView.setAdapter(mTaskAdapter);
+            createNewTaskAdapterThenBindToRecyclerView();
         } else {
-            mTaskAdapter.setTasks(mTaskList);
-            mTaskAdapter.notifyDataSetChanged();
+            updateAdapter();
         }
 
-        checkToShowCreateButton();
+        checkIfAdapterIsEmptyToShowCreateButton();
     }
 
-    void checkToShowCreateButton() {
+    void updateAdapter() {
+        mTaskAdapter.setTasks(mTaskList);
+        mTaskAdapter.notifyDataSetChanged();
+    }
+
+    void createNewTaskAdapterThenBindToRecyclerView() {
+        mTaskAdapter = new TaskAdapter(mTaskList);
+        mTaskRecyclerView.setAdapter(mTaskAdapter);
+    }
+
+    void checkIfAdapterIsEmptyToShowCreateButton() {
         if (mTaskAdapter.getItemCount() == 0) {
             mCreateTaskButton.setVisibility(View.VISIBLE);
         } else {
@@ -192,7 +199,7 @@ public class TaskListFragment extends Fragment {
         int index = mTaskList.indexOf(mHelperTaskForEdit);
         mTaskList.get(index).setTitle(title);
 
-        updateDatabaseFromList();
+        updateDatabaseFromLocalTaskList();
         updateRecyclerView();
     }
 
@@ -345,7 +352,7 @@ public class TaskListFragment extends Fragment {
             snackbar.show();
             notifyItemRemoved(adapterPosition);
             removeFromLocalTaskList(taskToRemove);
-            checkToShowCreateButton();
+            checkIfAdapterIsEmptyToShowCreateButton();
         }
 
         private void reinsertTask(int adapterPosition, Task taskToRemove) {
@@ -354,7 +361,7 @@ public class TaskListFragment extends Fragment {
             mTaskAdapter.notifyItemInserted(adapterPosition);
             mTaskAdapter.notifyItemRangeChanged(adapterPosition, mTaskAdapter.getItemCount());
             mTaskRecyclerView.scrollToPosition(adapterPosition);
-            checkToShowCreateButton();
+            checkIfAdapterIsEmptyToShowCreateButton();
         }
     }
 }

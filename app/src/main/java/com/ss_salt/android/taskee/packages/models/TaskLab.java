@@ -63,16 +63,11 @@ public class TaskLab {
                 new String[]{uuidString});
     }
 
-    public void updateDatabase(List<Task> tasks) {
+    public void replaceDatabaseTasksToUpdate(List<Task> replacementTasks) {
         mDatabase.delete(TaskTable.NAME, null, null);
-        for (Task task : tasks) {
+        for (Task task : replacementTasks) {
             addTask(task);
         }
-    }
-
-    public void deleteTask(Task task) {
-        String uuidString = task.getId().toString();
-        mDatabase.delete(TaskTable.NAME, TaskTable.Cols.UUID + " = ?", new String[]{uuidString});
     }
 
     public List<Task> getTasks() {
