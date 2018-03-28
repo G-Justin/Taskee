@@ -48,7 +48,7 @@ public class TaskListFragment extends Fragment {
     FloatingActionButton mAddTaskFloatingActionButton;
     Button mCreateTaskButton;
 
-    private Task mHelperTaskForEdit;
+    private Task mTaskWithTitleToEdit;
     List<Task> mTaskList;
 
 
@@ -110,7 +110,7 @@ public class TaskListFragment extends Fragment {
         }
 
         if (requestCode == REQUEST_TITLE) {
-            addTaskToLocalTaskList(taskTitle);
+            addNewTaskWithTheTitleOf(taskTitle);
         } else if (requestCode == REQUEST_EDIT) {
             editTaskTitle(taskTitle);
         }
@@ -138,11 +138,7 @@ public class TaskListFragment extends Fragment {
     // Accessors
     //========================================================================================
 
-    void updateDatabaseFromLocalTaskList() {
-        TaskLab.get(getActivity()).replaceDatabaseTasksToUpdate(mTaskList);
-    }
-
-    void addTaskToLocalTaskList(String taskTitle) {
+    void addNewTaskWithTheTitleOf(String taskTitle) {
         Task task = new Task();
         task.setTitle(taskTitle);
 
@@ -151,18 +147,12 @@ public class TaskListFragment extends Fragment {
         updateRecyclerView();
     }
 
-    void showDialogToEditTask(String taskTitle) {
-        FragmentManager fragmentManager = getFragmentManager();
-        EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance(taskTitle);
-        dialogFragment.setTargetFragment(TaskListFragment.this, REQUEST_EDIT);
-        dialogFragment.show(fragmentManager, DIALOG_TITLE);
-    }
+    void editTaskTitle(String titleToEdit) {
+        int index = mTaskList.indexOf(mTaskWithTitleToEdit);
+        mTaskList.get(index).setTitle(titleToEdit);
 
-    void showDialogForNewTask() {
-        FragmentManager fragmentManager = getFragmentManager();
-        EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance();
-        dialogFragment.setTargetFragment(TaskListFragment.this, REQUEST_TITLE);
-        dialogFragment.show(fragmentManager, DIALOG_TITLE);
+        updateDatabaseFromLocalTaskList();
+        updateRecyclerView();
     }
 
     void updateRecyclerView() {
@@ -177,14 +167,14 @@ public class TaskListFragment extends Fragment {
         checkIfAdapterIsEmptyToShowCreateButton();
     }
 
-    void updateAdapter() {
-        mTaskAdapter.setTasks(mTaskList);
-        mTaskAdapter.notifyDataSetChanged();
-    }
-
     void createNewTaskAdapterThenBindToRecyclerView() {
         mTaskAdapter = new TaskAdapter(mTaskList);
         mTaskRecyclerView.setAdapter(mTaskAdapter);
+    }
+
+    void updateAdapter() {
+        mTaskAdapter.setTasks(mTaskList);
+        mTaskAdapter.notifyDataSetChanged();
     }
 
     void checkIfAdapterIsEmptyToShowCreateButton() {
@@ -195,12 +185,22 @@ public class TaskListFragment extends Fragment {
         }
     }
 
-    void editTaskTitle(String title) {
-        int index = mTaskList.indexOf(mHelperTaskForEdit);
-        mTaskList.get(index).setTitle(title);
+    void updateDatabaseFromLocalTaskList() {
+        TaskLab.get(getActivity()).replaceDatabaseTasksToUpdate(mTaskList);
+    }
 
-        updateDatabaseFromLocalTaskList();
-        updateRecyclerView();
+    void showDialogToEditTaskTitle(String taskTitleToEdit) {
+        FragmentManager fragmentManager = getFragmentManager();
+        EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance(taskTitleToEdit);
+        dialogFragment.setTargetFragment(TaskListFragment.this, REQUEST_EDIT);
+        dialogFragment.show(fragmentManager, DIALOG_TITLE);
+    }
+
+    void showDialogForNewTask() {
+        FragmentManager fragmentManager = getFragmentManager();
+        EditTitleDialogFragment dialogFragment = EditTitleDialogFragment.newInstance();
+        dialogFragment.setTargetFragment(TaskListFragment.this, REQUEST_TITLE);
+        dialogFragment.show(fragmentManager, DIALOG_TITLE);
     }
 
     void attachItemTouchHelperToAdapter() {
@@ -256,9 +256,6 @@ public class TaskListFragment extends Fragment {
     // Inner Classes
     //========================================================================================
 
-    /**
-     * Viewholder that holds each individual cardview of a task.
-     */
     class TaskHolder extends RecyclerView.ViewHolder {
         private Task mTask;
 
@@ -285,8 +282,8 @@ public class TaskListFragment extends Fragment {
             mEditTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mHelperTaskForEdit = mTask;
-                    showDialogToEditTask(mTask.getTitle());
+                    mTaskWithTitleToEdit = mTask;
+                    showDialogToEditTaskTitle(mTask.getTitle());
                 }
             });
         }
@@ -302,9 +299,6 @@ public class TaskListFragment extends Fragment {
         }
     }
 
-    /**
-     * Adapter for the recycler view that handles the tasks.
-     * */
     class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
         private List<Task> mTasks;
 
