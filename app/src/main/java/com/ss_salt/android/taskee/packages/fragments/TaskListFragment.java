@@ -32,6 +32,12 @@ import com.ss_salt.android.taskee.packages.models.TaskLab;
 
 /**
  * Created by Justin G on 04/02/2018.
+ *
+ * Main task list fragment. The database which contains the tasks is updated like so:
+ *
+ *  - a function of a task is called (edit, delete, etc.)
+ *  - a class which holds a local list is then updated
+ *  - database is then also updated onPause and onDestroy
  */
 
 public class TaskListFragment extends Fragment {
