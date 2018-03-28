@@ -112,7 +112,7 @@ public class TaskListFragment extends Fragment {
         if (requestCode == REQUEST_TITLE) {
             addNewTaskWithTheTitleOf(taskTitle);
         } else if (requestCode == REQUEST_EDIT) {
-            editTaskTitle(taskTitle);
+            replaceTaskTitle(taskTitle);
         }
     }
 
@@ -143,14 +143,16 @@ public class TaskListFragment extends Fragment {
         task.setTitle(taskTitle);
 
         mTaskList.add(task);
-        updateDatabaseFromLocalTaskList();
-        updateRecyclerView();
+        updateApplicationWithNewSetOfTasks();
     }
 
-    void editTaskTitle(String titleToEdit) {
-        int index = mTaskList.indexOf(mTaskWithTitleToEdit);
-        mTaskList.get(index).setTitle(titleToEdit);
+    void replaceTaskTitle(String newTitle) {
+        mTaskWithTitleToEdit.setTitle(newTitle);
 
+        updateApplicationWithNewSetOfTasks();
+    }
+
+    private void updateApplicationWithNewSetOfTasks() {
         updateDatabaseFromLocalTaskList();
         updateRecyclerView();
     }
