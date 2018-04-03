@@ -144,6 +144,45 @@ public class TaskListFragment extends Fragment {
     // Accessors
     //========================================================================================
 
+    void updateRecyclerView() {
+        mTaskList = TaskLab.get(getActivity()).getTasks();
+
+        if (mTaskAdapter == null) {
+            createNewTaskAdapterThenBindToRecyclerView();
+        } else {
+            updateAdapter();
+        }
+
+        checkIfAdapterIsEmptyToShowCreateButton();
+    }
+
+    private void updateApplicationWithNewSetOfTasks() {
+        updateDatabaseFromLocalTaskList();
+        updateRecyclerView();
+    }
+
+    void updateAdapter() {
+        mTaskAdapter.setTasks(mTaskList);
+        mTaskAdapter.notifyDataSetChanged();
+    }
+
+    void updateDatabaseFromLocalTaskList() {
+        TaskLab.get(getActivity()).replaceDatabaseTasksToUpdate(mTaskList);
+    }
+
+    void createNewTaskAdapterThenBindToRecyclerView() {
+        mTaskAdapter = new TaskAdapter(mTaskList);
+        mTaskRecyclerView.setAdapter(mTaskAdapter);
+    }
+
+    void checkIfAdapterIsEmptyToShowCreateButton() {
+        if (mTaskAdapter.getItemCount() == 0) {
+            mCreateTaskButton.setVisibility(View.VISIBLE);
+        } else {
+            mCreateTaskButton.setVisibility(View.GONE);
+        }
+    }
+
     void addNewTaskWithTheTitleOf(String taskTitle) {
         Task task = new Task();
         task.setTitle(taskTitle);
@@ -158,43 +197,8 @@ public class TaskListFragment extends Fragment {
         updateApplicationWithNewSetOfTasks();
     }
 
-    private void updateApplicationWithNewSetOfTasks() {
-        updateDatabaseFromLocalTaskList();
-        updateRecyclerView();
-    }
-
-    void updateRecyclerView() {
-        mTaskList = TaskLab.get(getActivity()).getTasks();
-
-        if (mTaskAdapter == null) {
-            createNewTaskAdapterThenBindToRecyclerView();
-        } else {
-            updateAdapter();
-        }
-
-        checkIfAdapterIsEmptyToShowCreateButton();
-    }
-
-    void createNewTaskAdapterThenBindToRecyclerView() {
-        mTaskAdapter = new TaskAdapter(mTaskList);
-        mTaskRecyclerView.setAdapter(mTaskAdapter);
-    }
-
-    void updateAdapter() {
-        mTaskAdapter.setTasks(mTaskList);
-        mTaskAdapter.notifyDataSetChanged();
-    }
-
-    void checkIfAdapterIsEmptyToShowCreateButton() {
-        if (mTaskAdapter.getItemCount() == 0) {
-            mCreateTaskButton.setVisibility(View.VISIBLE);
-        } else {
-            mCreateTaskButton.setVisibility(View.GONE);
-        }
-    }
-
-    void updateDatabaseFromLocalTaskList() {
-        TaskLab.get(getActivity()).replaceDatabaseTasksToUpdate(mTaskList);
+    void removeFromLocalTaskList(Task taskToDelete) {
+        mTaskList.remove(taskToDelete);
     }
 
     void showDialogToEditTaskTitle(String taskTitleToEdit) {
@@ -234,10 +238,6 @@ public class TaskListFragment extends Fragment {
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchCallback);
         itemTouchHelper.attachToRecyclerView(mTaskRecyclerView);
-    }
-
-    void removeFromLocalTaskList(Task taskToDelete) {
-        mTaskList.remove(taskToDelete);
     }
 
     void rearrangeTasks(int fromPosition, int toPosition) {
