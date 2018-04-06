@@ -8,4 +8,5 @@
     <string name="create_childtask_button">Create ChildTask</string>
     <string name="task_deleted">Task deleted</string>
     <string name="undo">Undo</string>
+    <string name="settings">Settings</string>
 </resources>
