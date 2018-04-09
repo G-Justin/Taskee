@@ -58,7 +58,6 @@ public class ChildTaskListFragment extends TaskListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
         UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
         int index = getArguments().getInt(ARG_SUBTASK_INDEX);
