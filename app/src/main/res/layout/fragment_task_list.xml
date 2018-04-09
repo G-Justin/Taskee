@@ -14,13 +14,13 @@
             android:layout_width="match_parent">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar_subtask"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
                 app:titleTextColor="@android:color/white"
                 android:theme="@style/AlertDialog.AppCompat.Light"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:navigationIcon="?attr/homeAsUpIndicator" />
 
             <android.support.design.widget.CoordinatorLayout

@@ -74,10 +74,10 @@ public class ChildTaskListFragment extends TaskListFragment {
 
         View v = inflater.inflate(R.layout.fragment_task_list, container, false);
 
-        Toolbar toolbar = v.findViewById(R.id.toolbar_subtask);
+        Toolbar toolbar = v.findViewById(R.id.toolbar);
         toolbar.setVisibility(View.VISIBLE);
         toolbar.setTitle(mSubTask.getTitle());
-        toolbar.setNavigationIcon(R.drawable.ic_back_button);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

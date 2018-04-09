@@ -58,7 +58,7 @@ public class SubTaskListFragment extends TaskListFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         mTask = TaskLab.get(getActivity()).getTask(taskId);
     }
 
@@ -69,10 +69,9 @@ public class SubTaskListFragment extends TaskListFragment {
 
         View v = inflater.inflate(R.layout.fragment_task_list, container, false);
 
-        Toolbar toolbar = v.findViewById(R.id.toolbar_subtask);
-        toolbar.setVisibility(View.VISIBLE);
+        Toolbar toolbar = v.findViewById(R.id.toolbar);
         toolbar.setTitle(mTask.getTitle());
-        toolbar.setNavigationIcon(R.drawable.ic_back_button);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
