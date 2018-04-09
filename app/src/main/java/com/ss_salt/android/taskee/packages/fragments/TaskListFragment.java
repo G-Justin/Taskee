@@ -106,11 +106,14 @@ public class TaskListFragment extends Fragment {
         });
 
         Toolbar toolbar = v.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+        toolbar.setTitle(getResources().getString(R.string.Taskee));
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(Gravity.START);
+            }
+        });
 
         mTaskRecyclerView = v.findViewById(R.id.task_recycler_view);
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -134,16 +137,6 @@ public class TaskListFragment extends Fragment {
 
         updateRecyclerView();
         return v;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(Gravity.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
