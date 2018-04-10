@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#673AB7</color>
-    <color name="colorPrimaryDark">#512DA8</color>
-    <color name="colorAccent">#FFC107</color>
+    <!--- Taskee Purple -->
+    <color name="taskeePurplePrimary">#673AB7</color>
+    <color name="taskeePurplePrimaryDark">#512DA8</color>
+    <color name="taskeePurpleColorAccent">#FFC107</color>
+
+    <!--- Janoski Grey -->
+    <color name="janoskiGreyPrimary">#9E9E9E</color>
+    <color name="janoskiGreyPrimaryDark">#616161</color>
+    <color name="janoskiGreyColorAccent">#00BCD4</color>
+
+    <!-- Cotton Candy -->
+    <color name="cottonCandyPrimary">#3F51B5</color>
+    <color name="cottonCandyPrimaryDark">#303F9F</color>
+    <color name="cottonCandyColorAccent">#FF4081</color>
+
+    <!-- Apple Pie -->
+    <color name="applePiePrimary">#F44336</color>
+    <color name="applePiePrimaryDark">#D32F2F</color>
+    <color name="applePieColorAccent">#FFC107</color>
+
+    <!-- Leprechaun -->
+    <color name="leprechaunPrimary">#4CAF50</color>
+    <color name="leprechaunPrimaryDark">#388E3C</color>
+    <color name="leprechaunColorAccent">#FF9800</color>
 
     <color name="task_card">#FFFFFF</color>
     <color name="primaryText">#212121</color>

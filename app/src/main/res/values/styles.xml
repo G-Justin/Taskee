@@ -1,15 +1,64 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <!-- Taskee Purple -->
+    <style name="TaskeePurple" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/taskeePurplePrimary</item>
+        <item name="colorPrimaryDark">@color/taskeePurplePrimaryDark</item>
+        <item name="colorAccent">@color/taskeePurpleColorAccent</item>
         <item name="color">@android:color/white</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <!-- Janoski Grey -->
+    <style name="JanoskiGrey" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/janoskiGreyPrimary</item>
+        <item name="colorPrimaryDark">@color/janoskiGreyPrimaryDark</item>
+        <item name="colorAccent">@color/janoskiGreyColorAccent</item>
+        <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- Cotton Candy -->
+    <style name="CottonCandy" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/cottonCandyPrimary</item>
+        <item name="colorPrimaryDark">@color/cottonCandyPrimaryDark</item>
+        <item name="colorAccent">@color/cottonCandyColorAccent</item>
+        <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- Apple Pie -->
+    <style name="ApplePie" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/applePiePrimary</item>
+        <item name="colorPrimaryDark">@color/applePiePrimaryDark</item>
+        <item name="colorAccent">@color/applePieColorAccent</item>
+        <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- Leprechaun -->
+    <style name="Leprechaun" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/leprechaunPrimary</item>
+        <item name="colorPrimaryDark">@color/leprechaunPrimaryDark</item>
+        <item name="colorAccent">@color/leprechaunColorAccent</item>
+        <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+
+
+
+
 
 </resources>
