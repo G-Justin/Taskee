@@ -17,9 +17,9 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/taskeePurplePrimary"
-                app:titleTextColor="@android:color/white"
-                android:theme="@style/AlertDialog.AppCompat.Light"
+                android:background="?attr/colorPrimary"
+                app:titleTextColor="?attr/color"
+                android:theme="?attr/toolbarStyle"
                 android:visibility="visible"
                 app:navigationIcon="?attr/homeAsUpIndicator" />
 
