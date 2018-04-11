@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 
 import com.ss_salt.android.taskee.R;
+import com.ss_salt.android.taskee.packages.activites.SettingsActivity;
 import com.ss_salt.android.taskee.packages.activites.SubTaskListActivity;
 
 import java.util.Collections;
@@ -85,6 +86,11 @@ public class TaskListFragment extends Fragment {
     //========================================================================================
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -100,6 +106,11 @@ public class TaskListFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(true);
                 mDrawerLayout.closeDrawers();
+
+                switch (item.getItemId()) {
+                    case R.id.settings:
+                        openSettingsPage();
+                }
 
                 return true;
             }
@@ -284,6 +295,11 @@ public class TaskListFragment extends Fragment {
             }
         }
         mTaskAdapter.notifyItemMoved(fromPosition, toPosition);
+    }
+
+    void openSettingsPage() {
+        Intent intent = new Intent(getActivity(), SettingsActivity.class);
+        startActivity(intent);
     }
 
     void startNewTaskActivity(Task task, int adapterPosition) {

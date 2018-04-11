@@ -17,6 +17,7 @@
         </activity>
         <activity android:name=".packages.activites.SubTaskListActivity" />
         <activity android:name=".packages.activites.ChildTaskListActivity" />
+        <activity android:name=".packages.activites.SettingsActivity" />
     </application>
 
 </manifest>
