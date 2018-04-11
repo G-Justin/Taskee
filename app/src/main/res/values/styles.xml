@@ -6,6 +6,9 @@
         <item name="colorPrimaryDark">@color/taskeePurplePrimaryDark</item>
         <item name="colorAccent">@color/taskeePurpleColorAccent</item>
         <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!-- Janoski Grey -->
@@ -14,6 +17,9 @@
         <item name="colorPrimaryDark">@color/janoskiGreyPrimaryDark</item>
         <item name="colorAccent">@color/janoskiGreyColorAccent</item>
         <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!-- Cotton Candy -->
@@ -22,6 +28,9 @@
         <item name="colorPrimaryDark">@color/cottonCandyPrimaryDark</item>
         <item name="colorAccent">@color/cottonCandyColorAccent</item>
         <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!-- Apple Pie -->
@@ -30,6 +39,9 @@
         <item name="colorPrimaryDark">@color/applePiePrimaryDark</item>
         <item name="colorAccent">@color/applePieColorAccent</item>
         <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!-- Leprechaun -->
@@ -38,6 +50,9 @@
         <item name="colorPrimaryDark">@color/leprechaunPrimaryDark</item>
         <item name="colorAccent">@color/leprechaunColorAccent</item>
         <item name="color">@android:color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
 
