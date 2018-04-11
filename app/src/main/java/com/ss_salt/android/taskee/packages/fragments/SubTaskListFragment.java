@@ -60,6 +60,8 @@ public class SubTaskListFragment extends TaskListFragment {
         super.onCreate(savedInstanceState);
         UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
         mTask = TaskLab.get(getActivity()).getTask(taskId);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
     }
 
     @Nullable

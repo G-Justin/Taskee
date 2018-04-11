@@ -8,15 +8,19 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/TaskeePurple">
+
         <activity android:name=".packages.activites.TaskListActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".packages.activites.SubTaskListActivity" />
+
         <activity android:name=".packages.activites.ChildTaskListActivity" />
+
         <activity android:name=".packages.activites.SettingsActivity" />
     </application>
 

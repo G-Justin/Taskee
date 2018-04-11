@@ -65,6 +65,9 @@ public class ChildTaskListFragment extends TaskListFragment {
 
         mTask = TaskLab.get(getActivity()).getTask(taskId);
         mSubTask = LocalSubTaskListClass.get().getLocalSubTaskList().get(index);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
     }
 
     @Nullable
