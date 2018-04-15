@@ -14,12 +14,12 @@
             android:title="@string/title_auto_upload" />
 
         <ListPreference
-            android:defaultValue="3"
-            android:dialogTitle="@string/title_upload_quality"
-            android:entries="@array/pref_upload_quality_entries"
+            android:defaultValue="0"
+            android:dialogTitle="@string/theme"
+            android:entries="@array/pref_themes"
             android:entryValues="@array/pref_upload_quality_values"
             android:key="@string/key_upload_quality"
-            android:title="@string/title_upload_quality"
+            android:title="@string/title_theme"
             />
     </PreferenceCategory>
 

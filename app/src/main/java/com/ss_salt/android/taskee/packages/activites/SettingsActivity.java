@@ -30,6 +30,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.settings);
 
         getFragmentManager().beginTransaction().replace(android.R.id.content,
                 new MainPreferenceFragment()).commit();
@@ -54,7 +55,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static void bindPreferenceSummaryToValue(Preference preference) {
+   private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
@@ -69,12 +70,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             String stringValue = newValue.toString();
 
             if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
 
-                // Set the summary to reflect the new value.
+
                 preference.setSummary(
                         index >= 0
                                 ? listPreference.getEntries()[index]
