@@ -19,7 +19,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:titleTextColor="?attr/color"
-                android:theme="?attr/toolbarStyle"
+                android:theme="@style/AlertDialog.AppCompat.Light"
                 android:visibility="visible"
                 app:navigationIcon="?attr/homeAsUpIndicator" />
 
