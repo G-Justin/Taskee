@@ -10,6 +10,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -159,6 +160,15 @@ public class TaskListFragment extends Fragment {
         super.onDestroy();
     }
 
+    public boolean onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        }
+
+        return false;
+    }
+
 
     //========================================================================================
     // Accessors
@@ -193,7 +203,7 @@ public class TaskListFragment extends Fragment {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDrawerLayout.openDrawer(Gravity.START);
+                mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
     }
@@ -212,7 +222,7 @@ public class TaskListFragment extends Fragment {
                                 break;
                         }
 
-                        mDrawerLayout.closeDrawers();
+                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         return true;
                     }
                 });
@@ -234,6 +244,7 @@ public class TaskListFragment extends Fragment {
             public void onDrawerClosed(@NonNull View drawerView) {
                 switch (NAV_DRAWER_TAG) {
                     case NavDrawerTagClass.SETTINGS_TAG:
+                        NAV_DRAWER_TAG = 0;
                         openSettingsPage();
                         break;
                     default:
