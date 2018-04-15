@@ -2,13 +2,13 @@
 <resources>
     <!-- For testing -->
     <string-array name="pref_themes">
-        <item>Taskee Purple</item>
-        <item>Janoski Grey</item>
-        <item>Cotton Candy</item>
-        <item>Apple Pie</item>
-        <item>Leprechaun</item>
+        <item>@string/taskee_purple</item>
+        <item>@string/janoski_grey</item>
+        <item>@string/cotton_candy</item>
+        <item>@string/apple_pie</item>
+        <item>@string/leprechaun</item>
     </string-array>
-    <string-array name="pref_upload_quality_values">
+    <string-array name="pref_themes_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
