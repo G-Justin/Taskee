@@ -7,6 +7,8 @@
             android:entries="@array/pref_themes"
             android:entryValues="@array/pref_themes_values"
             android:key="@string/key_theme"
+            android:summary="%s"
+            android:icon="@drawable/ic_theme"
             android:title="@string/title_theme"
             />
     </PreferenceCategory>

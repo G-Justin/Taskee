@@ -51,9 +51,6 @@ implements SharedPreferences.OnSharedPreferenceChangeListener{
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_main);
-
-            String preferenceTitle = getResources().getString(R.string.key_theme);
-            ListPreference themePreference = (ListPreference) findPreference(preferenceTitle);
         }
     }
 
