@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.ss_salt.android.taskee.packages.models.NavDrawerTagClass;
 import com.ss_salt.android.taskee.packages.models.Task;
 import com.ss_salt.android.taskee.packages.models.TaskLab;
 
@@ -54,11 +55,15 @@ public class TaskListFragment extends Fragment {
     // Properties
     //========================================================================================
 
+    private static int NAV_DRAWER_TAG = 0;
     private static final int REQUEST_TITLE = 0;
     private static final int REQUEST_EDIT = 1;
     private static final String DIALOG_TITLE = "DialogTitle";
 
     DrawerLayout mDrawerLayout;
+    NavigationView mNavigationView;
+    Toolbar mToolbar;
+
     RecyclerView mTaskRecyclerView;
     TaskAdapter mTaskAdapter;
     FloatingActionButton mAddTaskFloatingActionButton;
@@ -99,53 +104,22 @@ public class TaskListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_task_list, container, false);
 
         mDrawerLayout = v.findViewById(R.id.drawer_layout);
+        setupDrawerListener();
 
-        NavigationView navigationView = v.findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(true);
-                mDrawerLayout.closeDrawers();
+        mNavigationView = v.findViewById(R.id.nav_view);
+        setupNavigationView();
 
-                switch (item.getItemId()) {
-                    case R.id.settings:
-                        openSettingsPage();
-                }
-
-                return true;
-            }
-        });
-
-        Toolbar toolbar = v.findViewById(R.id.toolbar);
-        toolbar.setTitle(getResources().getString(R.string.Taskee));
-        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDrawerLayout.openDrawer(Gravity.START);
-            }
-        });
+        mToolbar = v.findViewById(R.id.toolbar);
+        setupToolbar();
 
         mTaskRecyclerView = v.findViewById(R.id.task_recycler_view);
-        mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        attachItemTouchHelperToAdapter();
+        setupRecyclerView();
 
         mAddTaskFloatingActionButton = v.findViewById(R.id.button_add_task);
-        mAddTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogForNewTask();
-            }
-        });
+        setupFloatingActionButton();
 
         mCreateTaskButton = v.findViewById(R.id.button_create_task);
-        mCreateTaskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogForNewTask();
-            }
-        });
+        setupCreateTaskButton();
 
         updateRecyclerView();
         return v;
@@ -185,9 +159,94 @@ public class TaskListFragment extends Fragment {
         super.onDestroy();
     }
 
+
     //========================================================================================
     // Accessors
     //========================================================================================
+
+    private void setupCreateTaskButton() {
+        mCreateTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogForNewTask();
+            }
+        });
+    }
+
+    private void setupFloatingActionButton() {
+        mAddTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogForNewTask();
+            }
+        });
+    }
+
+    private void setupRecyclerView() {
+        mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        attachItemTouchHelperToAdapter();
+    }
+
+    private void setupToolbar() {
+        mToolbar.setTitle(getResources().getString(R.string.Taskee));
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(Gravity.START);
+            }
+        });
+    }
+
+    private void setupNavigationView() {
+        mNavigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        item.setChecked(true);
+                        switch (item.getItemId()) {
+                            case R.id.settings:
+                                NAV_DRAWER_TAG = NavDrawerTagClass.SETTINGS_TAG;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
+    }
+
+    private void setupDrawerListener() {
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                switch (NAV_DRAWER_TAG) {
+                    case NavDrawerTagClass.SETTINGS_TAG:
+                        openSettingsPage();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+    }
 
     void updateRecyclerView() {
         mTaskList = TaskLab.get(getActivity()).getTasks();
