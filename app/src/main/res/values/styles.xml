@@ -54,7 +54,7 @@
         <item name="colorPrimaryDark">@color/leprechaunPrimaryDark</item>
         <item name="colorAccent">@color/leprechaunColorAccent</item>
         <item name="color">@android:color/white</item>
-        <item name="alertDialogTheme">@style/LeprechaunDialog</item>
+        <item name="alertDialogStyle">@style/LeprechaunDialog</item>
     </style>
 
     <style name="LeprechaunDialog" parent="AlertDialog.AppCompat.Light">
