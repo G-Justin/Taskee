@@ -12,7 +12,7 @@
     <string name="Taskee">Taskee</string>
     <string name="theme">Theme</string>
     <string name="title_theme">Theme</string>
-    <string name="key_theme">key_theme</string>
+    <string name="key_theme">KEY_APP_THEME</string>
 
     <string name="taskee_purple">Taskee Purple</string>
     <string name="janoski_grey">Janoski Grey</string>

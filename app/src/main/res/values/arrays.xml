@@ -9,10 +9,10 @@
         <item>@string/leprechaun</item>
     </string-array>
     <string-array name="pref_themes_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
+        <item>TaskeePurple</item>
+        <item>JanoskiGrey</item>
+        <item>CottonCandy</item>
+        <item>ApplePie</item>
+        <item>Leprechaun</item>
     </string-array>
 </resources>

@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.ss_salt.android.taskee.R;
+import com.ss_salt.android.taskee.packages.models.PreferenceUtils;
+import com.ss_salt.android.taskee.packages.models.ThemeUtils;
 
 
 /**
@@ -31,6 +33,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setPreferredTheme();
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
 
@@ -40,5 +43,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
             fragment = createFragment();
             fm.beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
+    }
+
+    private void setPreferredTheme() {
+        String themeValue = PreferenceUtils.getThemePreferenceValue(this);
+        ThemeUtils.setActivityTheme(this, themeValue);
     }
 }

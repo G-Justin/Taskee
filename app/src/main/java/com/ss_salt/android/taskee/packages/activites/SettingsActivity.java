@@ -1,8 +1,12 @@
 package com.ss_salt.android.taskee.packages.activites;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 
 import android.support.annotation.Nullable;
@@ -10,6 +14,9 @@ import android.view.MenuItem;
 
 
 import com.ss_salt.android.taskee.R;
+import com.ss_salt.android.taskee.packages.fragments.MainPreferenceFragment;
+import com.ss_salt.android.taskee.packages.models.PreferenceUtils;
+import com.ss_salt.android.taskee.packages.models.ThemeUtils;
 
 import java.util.List;
 
@@ -20,6 +27,7 @@ implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setPreferredTheme();
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.settings);
@@ -33,13 +41,6 @@ implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     }
 
-    public static class MainPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_main);
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -47,6 +48,11 @@ implements SharedPreferences.OnSharedPreferenceChangeListener{
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setPreferredTheme() {
+        String themeValue = PreferenceUtils.getThemePreferenceValue(this);
+        ThemeUtils.setActivityTheme(this, themeValue);
     }
 
 }
