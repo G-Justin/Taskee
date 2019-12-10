@@ -22,5 +22,6 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.ss_salt.android.taskee", appContext.getPackageName());
+
     }
 }

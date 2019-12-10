@@ -41,7 +41,7 @@
                     android:layout_height="match_parent" />
 
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/button_add_task"
+                    android:id="@+id/fab_add_task"
                     android:src="@drawable/ic_add_task"
                     android:focusable="true"
                     android:elevation="6dp"

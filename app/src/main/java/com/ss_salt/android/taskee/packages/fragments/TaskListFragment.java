@@ -12,14 +12,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,7 +84,6 @@ public class TaskListFragment extends Fragment {
         return fragment;
     }
 
-
     //========================================================================================
     // LifeCycle
     //========================================================================================
@@ -116,7 +113,7 @@ public class TaskListFragment extends Fragment {
         mTaskRecyclerView = v.findViewById(R.id.task_recycler_view);
         setupRecyclerView();
 
-        mAddTaskFloatingActionButton = v.findViewById(R.id.button_add_task);
+        mAddTaskFloatingActionButton = v.findViewById(R.id.fab_add_task);
         setupFloatingActionButton();
 
         mCreateTaskButton = v.findViewById(R.id.button_create_task);

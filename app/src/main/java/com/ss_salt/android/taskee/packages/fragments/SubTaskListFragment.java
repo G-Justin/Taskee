@@ -89,7 +89,7 @@ public class SubTaskListFragment extends TaskListFragment {
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         attachItemTouchHelperToAdapter();
 
-        mAddTaskFloatingActionButton = v.findViewById(R.id.button_add_task);
+        mAddTaskFloatingActionButton = v.findViewById(R.id.fab_add_task);
         mAddTaskFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
