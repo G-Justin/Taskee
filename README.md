@@ -7,7 +7,7 @@ Taskee is a simple note-taking Android application. Users can take up to three l
   * B.1
   * B.2
   
-![Taskee Demo](https://github.com/G-Justin/Taskee/Taskee.gif)
+![Taskee Demo](https://github.com/G-Justin/Taskee/blob/master/Taskee.gif)
 
 
 
