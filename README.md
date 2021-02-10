@@ -1,8 +1,8 @@
 # Taskee
 Taskee is a simple note-taking Android application. Users can take up to three layers of notes: 
 
-  
-<img src="https://github.com/G-Justin/Taskee/blob/master/Taskee.gif"  height="350"/>
+  <div style="text-align:center"><img src="https://github.com/G-Justin/Taskee/blob/master/Taskee.gif" height="400" /></div>
+
 
 ## Installation
 1. Navigate to [releases](https://github.com/G-Justin/Taskee/releases).
